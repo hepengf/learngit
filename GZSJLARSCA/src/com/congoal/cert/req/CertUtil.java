@@ -101,7 +101,8 @@ public class CertUtil extends LogJob{
 
 	/**
 	 * 生成请求文件,输入文件名,SUBJECTDN,KEYPAIR;返回文件名；
-	 * 
+	 * 这是一个新需求
+	 * 需要修改的地方挺多的
 	 * @param fullFileName
 	 * @param subjectDN
 	 * @param subjectKeyPair
