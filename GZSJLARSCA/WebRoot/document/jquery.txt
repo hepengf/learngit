@@ -1,0 +1,5 @@
+1、获取选中的复选框
+   var checks = $("input:checked");
+   
+2、获取选中的下拉框 
+   $("select option:selected") 

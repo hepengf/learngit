@@ -1,0 +1,43 @@
+http://blog.csdn.net/chenwei160803/article/details/7064370
+
+          首先，我们需要使得ConcurrentSessionFilter生效并在spring-security.xml配置。
+    <http auto-config="true" use-expressions="true">
+		<!-- Uncomment to limit the number of sessions a user can have -->
+		<session-management invalid-session-url="/index.do">
+			<concurrency-control max-sessions="1"
+				error-if-maximum-exceeded="false"/>
+		</session-management>	
+	</http>
+	
+	其次，需要在web.xml描述文件中配置中使得o.s.s.web.session.HttpSessionEventPublisher生效，
+	这样servelt容器将会通知Spring Security session生命周期的事件（通过HttpSessionEventPublisher）。
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>
+			org.springframework.security.web.session.HttpSessionEventPublisher
+		</listener-class>
+	</listener>然后，借助于使用session注册跟踪（通过session并发控制），实现显示系统中当前活跃用户的数量。
+   
+          让我们在BaseController中添加一个简单的方法以及bean自动织入。
+    @Autowired
+	SessionRegistry sessionRegistry;
+	
+	@ModelAttribute("numUsers")
+	public int getNumberOfUsers() {
+	   return sessionRegistry.getAllPrincipals().size();
+	}
+	
+	可以看到这暴露了一个能够在Spring MVC JSP页面中能够使用的属性。
+	
+          最后，我们可以添加一个页脚footer.jsp到JBCP Pets站点中并使用这个属性。  
+	<body>
+		<div id="footer">
+			${numUsers} user(s) are logged in!
+		</div>
+	</body>
+          如果你重新启动应用并登录，能够在每个页面的底部看到活动用户的数量。

@@ -1,0 +1,29 @@
+1、Strust配置文件
+返回类型
+<action name="" class="">
+	<result name="success" type="redirectAction">
+		<param name="actionName">
+			***Action
+		</param>
+	</result>
+</action>
+
+<action name="" class="">
+	<result type="plainText"/>
+</action>
+
+
+2、Struts标签访问List<Map>
+<s:iterator value="menus" id="menu">
+			<s:iterator value="#menu.values" id="resource">
+					<s:if test="#resource.pid == -1">
+					          根
+					</s:if>
+					<s:else>
+						子
+					</s:else>
+			</s:iterator>
+  </s:iterator>
+  
+
+  

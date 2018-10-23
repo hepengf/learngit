@@ -1,0 +1,38 @@
+@charset "utf-8";
+/* CSS Document */
+body{ font-size:12px; font-family:Verdana,Helvetica,Arial,sans-serif; margin:0; padding:0; background:#016ba9;}
+h1, h2, h3, h4, h5, h6 { font-size:1em; }
+a { color:#333; text-decoration:none; }
+a{outline: none; star:expression(this.onFocus=this.blur());}
+	a:hover { color:#cc0001; text-decoration:underline; }
+ul, li { list-style:none; margin:0; padding:0; }
+fieldset, img { border:none; float:none }
+from{ margin:0; padding:0;}
+legend { display:none; }
+em, strong, cite, th { font-style:normal; font-weight:400; }
+input, textarea, select, button { font:12px Verdana,Helvetica,Arial,sans-serif; }
+table { border-collapse:collapse; }
+clear {clear:both; text-align:left; border:0;}
+
+/*==========登录页==========*/
+.center{ margin:0 auto; width:1000px;}
+.lg1{ background:url(../img/login_view_01.gif) no-repeat; height:83px;}
+.lg2{ background:url(../img/login_view_02.gif) no-repeat; height:75px;}
+.lg3{ float:left; width:252px;}
+	.lg3_1{ float:left; background:url(../img/login_view_03.gif) no-repeat; width:124px; height:292px;}
+	.lg3_2{ float:left; background:url(../img/login_view_04.gif) no-repeat; width:128px; height:292px;}
+.lg4{ float:left; width:487px;}
+.lg5{ float:left; width:261px;}
+	.lg5_1{ float:left; background:url(../img/login_view_06.gif) no-repeat; width:130px; height:292px;}
+	.lg5_2{ float:left; background:url(../img/login_view_07.gif) no-repeat; width:131px; height:292px;}
+.footer{ clear:both;}
+.foot_1{ background:url(../img/login_view_08.gif) no-repeat; height:78px;}
+.foot_2{ background:url(../img/login_view_09.gif) no-repeat; height:72px; background:}
+.con_login1{ height:125px;background:url(../img/con_login1bj.gif) no-repeat;}
+.con_login2{ clear:both;}
+	.left_login2{ float:left; background:url(../img/left_login2bj.gif) no-repeat; width:180px; height:118px;}
+	.righg_login2{ float:left; color:#fff; background:url(../img/righg_login2bj.gif) no-repeat; width:307px;}
+.con_login3{ clear:both; margin-top:-20px\9; height:49px;background:url(../img/con_login3bj.gif) no-repeat;}
+.lg_input{ padding-left:5px; width:160px; height:24px; border:1px solid #19769f; color:#000000; line-height:25px; background:#fff;}
+.lg_buttom{ cursor:pointer;display:inline; margin:0; margin-top:10px; color:#fff; font-size:12px; background:url(../img/lg_buttom.gif) no-repeat; border:0; width:88px; height:25px;}
+.lg_buttom1{ cursor:pointer;display:inline; margin:0; margin-top:10px; color:#fff; font-size:12px; background:url(../img/lg_buttom1.gif) no-repeat; border:0; width:93px; height:25px;}

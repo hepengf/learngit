@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    					http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/security 
+                        http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+
+	<!-- 如果登录失败重定向的界面 -->
+	<http use-expressions="true" entry-point-ref="authenticationEntryPoint"
+		access-denied-page="/web/accessDenied.jsp" >
+		<!-- <access-denied-handler error-page="/web/accessDenied.jsp" /> -->
+
+
+		<!-- 不用验证的路径 -->
+		<intercept-url pattern="/admin.do" filters="none" /><!-- 数据库连接池 -->
+		<intercept-url pattern="/login.jsp" filters="none" />
+		<intercept-url pattern="/403.jsp" filters="none" />
+		<intercept-url pattern="/404.jsp" filters="none" />
+		<intercept-url pattern="/web/statistics.jsp" filters="none" />
+		<intercept-url pattern="/web/accessDenied.jsp" filters="none" />
+		<intercept-url pattern="/logoutAction.action" filters="none" />
+		
+		<intercept-url pattern="/web/img/**" filters="none" />
+		<intercept-url pattern="/web/js/**" filters="none" />
+		<intercept-url pattern="/web/css/**" filters="none" />
+		<intercept-url pattern="/web/images/**" filters="none" />
+
+
+		<!-- isAuthenticated()表示只有通过验证的用户才能访问 -->
+		<intercept-url pattern="/**" access="isAuthenticated()" />
+
+		<!--<intercept-url pattern="/j_spring_security_check" requires-channel="https" 
+			method="POST"/> -->
+
+		<!-- 实现免登陆验证 -->
+		<remember-me />
+
+		<!-- session 并发控制 -->
+		<!--  <session-management invalid-session-url="/login.jsp">
+		     <concurrency-control max-sessions="1" error-if-maximum-exceeded="true" expired-url="/login.jsp?error=expired"/>
+		</session-management>-->
+
+		<!-- 使得HTTP session失效（如果invalidate-session属性被设置为true) -->
+		<logout invalidate-session="false" logout-success-url="/login.jsp?"
+			logout-url="/j_spring_security_logout" />
+
+		<custom-filter ref="loginFilter" position="FORM_LOGIN_FILTER" />
+		<custom-filter ref="securityFilter" before="FILTER_SECURITY_INTERCEPTOR" />
+	</http>
+
+
+	<!-- 登录验证器 -->
+	<beans:bean id="loginFilter"
+		class="com.congoal.cert.security.MyUsernamePasswordAuthenticationFilter">
+		<!-- 处理登录 -->
+		<beans:property name="filterProcessesUrl" value="/j_spring_security_check"></beans:property>
+		<beans:property name="authenticationSuccessHandler"
+			ref="loginLogAuthenticationSuccessHandler"></beans:property>
+		<beans:property name="authenticationFailureHandler"
+			ref="simpleUrlAuthenticationFailureHandler"></beans:property>
+		<beans:property name="authenticationManager" ref="myAuthenticationManager"></beans:property>
+
+	</beans:bean>
+
+	<!-- 未登录的切入点，表单所在页面 -->
+	<beans:bean id="authenticationEntryPoint"
+		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<beans:property name="loginFormUrl" value="/login.jsp"></beans:property>
+	</beans:bean>
+
+	<beans:bean id="loginLogAuthenticationSuccessHandler"
+		class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+		<beans:property name="defaultTargetUrl" value="/index.action"></beans:property>
+		<beans:property name="alwaysUseDefaultTargetUrl" value="true"></beans:property>
+	</beans:bean>
+
+
+	<beans:bean id="simpleUrlAuthenticationFailureHandler"
+		class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+		<beans:property name="defaultFailureUrl" value="/login.jsp?error=1"></beans:property>
+	</beans:bean>
+
+	<!-- 配置用户名，密码等用户信息 -->
+	<authentication-manager alias="myAuthenticationManager">
+		<authentication-provider user-service-ref="myUserDetailsServiceImpl" />
+	</authentication-manager>
+
+
+	<beans:bean id="myUserDetailsServiceImpl"
+		class="com.congoal.cert.security.MyUserDetailsServiceImpl">
+	</beans:bean>
+
+	<!-- <beans:bean id="userService" class="com.congoal.cert.service.impl.UserServiceImpl"> 
+		<beans:property name="userDao" ref="userDao" /> </beans:bean> <beans:bean 
+		id="userDao" class="com.congoal.cert.dao.impl.UserDaoImpl"> <beans:property 
+		name="sessionFactory" ref="sessionFactory" /> </beans:bean> -->
+
+
+	<!-- 认证过滤器 -->
+	<beans:bean id="securityFilter"
+		class="com.congoal.cert.security.MySecurityInterceptor">
+		<!-- 用户所拥有的权限 -->
+		<beans:property name="authenticationManager" ref="myAuthenticationManager"></beans:property>
+		<!-- 用户是否拥有所请求的链接（资源）的权限 ,判断用户的权限和当前资源的权限是否匹配 -->
+		<beans:property name="accessDecisionManager" ref="accessDecisionManager"></beans:property>
+		<!-- 链接（资源）与权限对应的关系 -->
+		<beans:property name="securityMetadataSource" ref="securityMetadataSource"></beans:property>
+	</beans:bean>
+
+
+	<beans:bean id="accessDecisionManager"
+		class="com.congoal.cert.security.MyAccessDecisionManager"></beans:bean>
+
+	<beans:bean id="securityMetadataSource"
+		class="com.congoal.cert.security.MySecurityMetadataSource">
+		<!-- useAntPath 是否使用Apache Ant的匹配模式，即资源/userManager/** 和/userManager/UserManager_list.action匹配 -->
+		<beans:property name="useAntPath" value="true">
+		</beans:property>
+		<!-- lowercaseComparisons 是否在比较URL前将URL都转化成小写，即资源/userManager/** 和/UserManager/××匹配 -->
+		<beans:property name="lowercaseComparisons" value="true">
+		</beans:property>
+
+	</beans:bean>
+
+	<!-- <beans:bean id="resourceService" class="com.congoal.cert.service.impl.ResourceServiceImpl"> 
+		<beans:property name="resourceDao" ref="resourceDao" /> </beans:bean> <beans:bean 
+		id="resourceDao" class="com.congoal.cert.dao.impl.ResourceDaoImpl"> <beans:property 
+		name="sessionFactory" ref="sessionFactory" /> </beans:bean> -->
+
+	<!-- 认证日志 -->
+	<beans:bean id="authenticationListener"
+		class="org.springframework.security.authentication.event.LoggerListener"></beans:bean>
+
+	<!-- 授权日志 -->
+	<beans:bean id="authorizationListener"
+		class="org.springframework.security.access.event.LoggerListener"></beans:bean>
+</beans:beans>

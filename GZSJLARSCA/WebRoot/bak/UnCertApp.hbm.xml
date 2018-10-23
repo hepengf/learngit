@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.congoal.cert.pojo.UnCertApp" table="un_cert_app">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="increment"></generator>
+        </id>
+        <property name="c" type="java.lang.String">
+            <column name="C"  />
+        </property>
+        <property name="cn" type="java.lang.String">
+            <column name="CN"  />
+        </property>
+        <property name="l" type="java.lang.String">
+            <column name="L"  />
+        </property>
+        <property name="st" type="java.lang.String">
+            <column name="ST"  />
+        </property>
+        <property name="o" type="java.lang.String">
+            <column name="O"  />
+        </property>
+        <property name="ou" type="java.lang.String">
+            <column name="OU"  />
+        </property>
+         <property name="net" type="java.lang.String">
+            <column name="NET"  />
+        </property>
+        <property name="email" type="java.lang.String">
+            <column name="EMAIL"  />
+        </property>
+         <property name="createdate" type="java.util.Date">
+            <column name="createdate"  />
+        </property>
+        <property name="isSign" type="java.lang.Integer">
+            <column name="isSign"  />
+        </property>
+        <property name="signOperator" type="java.lang.String">
+            <column name="signOperator"  />
+        </property>
+         <property name="signdate" type="java.util.Date">
+            <column name="signdate"  />
+        </property>
+        
+       
+    </class>
+</hibernate-mapping>

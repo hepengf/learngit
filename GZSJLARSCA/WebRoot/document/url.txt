@@ -1,0 +1,23 @@
+http://www.iteye.com/problems/55955
+
+http://static.springsource.org/spring-security/site/docs/3.1.x/reference/springsecurity-single.html
+
+
+
+<style>
+table{ border-collapse:collapse;}
+table tr td{ border:1px solid #cc0000;}
+</style>
+表格，一像素边框
+
+
+<style>
+.tab{ border-collapse:collapse;}
+.tab tr td{ border:1px solid #cc0000;}
+</style>
+
+<table width="100%" class="tab" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+  
+  
+  border-collapse:collapse;这要是这个，合并边框

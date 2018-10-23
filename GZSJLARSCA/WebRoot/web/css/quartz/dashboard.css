@@ -1,0 +1,241 @@
+@CHARSET "UTF-8";
+
+.shoufei {
+	width: 560px;
+	height: 300px;
+	margin-left: 0px;
+	margin-top: 0px;
+	float: left;
+}
+
+.top {
+	width: 675px;
+	height: 44px;
+	background: url('../images/ybp_top_19.jpg') no-repeat;
+	cursor: move;
+}
+
+#top_div {
+	margin-top: 17px;
+	margin-left: 42px;
+	margin-right: 36px;
+}
+
+#title_div {
+	float: left;
+}
+
+#title_div_right {
+	float: right;
+	color: #000033;
+	margin-left: 959px; 
+	margin-top: -20px;
+}
+
+#title_div_left {
+	color: #000033;
+}
+
+#title {
+	color: #0065b8;
+	font-weight: bold;
+	font-size: 20px;
+	font-family: serif;
+}
+
+#body {
+	width: 675px;
+	height: 350px;
+	background: url('../images/ybp_middle_19.jpg') repeat-y;
+}
+
+#body2 {
+	width: 675px;
+	height: 350px;
+	background: url('../images/ybp_middle_19.jpg') repeat-y;
+}
+
+#body_first {
+	margin-left: 0px;
+	margin-top: -10px;
+}
+
+#body_second {
+	margin-top: 13px;
+}
+
+#body_second_left {
+	margin-left: 27px;
+	float: left;
+	font-size: 12px;
+}
+
+#body_second_right {
+	float: right;
+	margin-right: 5px;
+	height: 36px;
+}
+
+#right_img {
+	background: url('../images/clje_19.jpg') no-repeat;
+	width: 165px;
+	height: 36px;
+}
+
+#body_third {
+	width: 560px;
+	height: 255px;
+	margin-left: 0px;
+}
+
+#bottom {
+	width: 675px;
+	height: 11px;
+	background: url('../images/ybp_bottom_19.jpg') no-repeat;
+}
+
+.shijian {
+	width: 560px;
+	height: 300px;
+	float: right;
+	margin-top: 0px;
+	margin-right: 0px;
+}
+
+#shijian_table {
+	width: 560px;
+	height: 300px;
+	margin-left: 0px;
+	margin-top: 0px;
+}
+
+#table_head {
+	border-top: 1px solid #d8d8d8;
+	border-left: 1px solid #d8d8d8;
+	border-collapse: collapse;
+	table-layout: auto;
+}
+
+#lane_chart {
+	border-left: 1px solid #d8d8d8;
+	border-top: 1px solid #d8d8d8;
+	border-collapse: collapse;
+	table-layout: auto;
+}
+
+#shijian_table table td {
+	border-right: 1px solid #d8d8d8;
+	border-bottom: 1px solid #d8d8d8;
+}
+
+#eventchart {
+	width: 195px;
+	height: 55px;
+}
+
+.xingneng {
+	width: 560px;
+	height: 300px;
+	margin-left: 0px;
+	margin-top: 0px;
+	float: left;
+}
+
+#xingneng_table {
+	width: 560px;
+	height: 300px;
+	margin-left: 0px;
+	background-color: #e5e5e5;
+	border-collapse:collapse;
+}
+
+#xingneng_table table{
+	width: 646px;
+	height: 300px;
+	border-collapse:collapse;
+	text-align: center;
+	/*border-left: 1px solid #d8d8d8;
+	border-top: 1px solid #d8d8d8;*/
+}
+
+#xingneng_table table td{
+	/*border-right: 1px solid #d8d8d8;*/
+	border-bottom: 1px solid #d8d8d8;
+}
+
+.while_tr {
+	background-color: #f6f6f6;
+	font-size: 12px;
+	color: #282929;
+	height: 37px;
+}
+
+#chartdiv {
+	width: 415px;
+	height: 348px;
+}
+
+.kefu {
+	width: 560px;
+	height: 300px;
+	float: right;
+	margin-top: 0px;
+	margin-right: 0px;
+}
+
+#body_container {
+	width: 560px;
+	height: 300px;
+	margin-left: 0px;
+	margin-top: 0px;
+}
+
+#container_top {
+	height: 33px;
+	background-color: #f0efef;
+	color: #268be6;
+}
+
+#suc {
+	width: 278px;
+	height: 300px;
+	border: 1px solid #d8d8d8;
+	float: left;
+}
+
+#suc_pie {
+	width: 175px;
+	height: 315px;
+	float: left;
+}
+
+#suc_bar {
+	width: 100px;
+	height: 315px;
+	float: right;
+}
+
+#act {
+	width: 278px;
+	height: 300px;
+	border: 1px solid #d8d8d8;
+	float: right;
+}
+
+#act_pie {
+	width: 175px;
+	height: 315px;
+	float: left;
+}
+
+#act_bar {
+	width: 100px;
+	height: 315px;
+	float: right;
+}
+
+#kefu_title {
+	font-weight: bold;
+	margin-left: 16px;
+	margin-top: 5px;
+}

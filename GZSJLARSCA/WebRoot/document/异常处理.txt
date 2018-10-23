@@ -1,0 +1,43 @@
+1、判断页面是否在Iframe框架内 (使用Javascript来判断某页面是否在普通框架或Iframe框架内)
+		<script> 
+			if(self!=top   &&   parent.document.body.tagName   ==   "FRAMESET")     //普通框架 
+			{ 
+				alert( "普通框架 "); 
+			} 
+			
+			if(self!=top   &&   parent.document.body.tagName   ==   "BODY")     //Iframe框架 
+			{ 
+				alert( "Iframe框架 "); 
+			} 
+		</script> 
+		
+		
+2、JS 跳出iframe框架
+//window.parent.location="<%=request.getContextPath() %>/login.jsp";
+
+
+3、js屏蔽浏览器（IE和FireFox）的刷新功能 
+		document.onkeydown=function()
+		{
+		  if ((window.event.keyCode==116)|| //屏蔽 F5
+		      (window.event.keyCode==122)|| //屏蔽 F11
+		      (window.event.shiftKey && window.event.keyCode==121) //shift+F10
+		     )
+		     { 
+		          window.event.keyCode=0;
+		          window.event.returnValue=false;
+		     } 
+		  if ((window.event.altKey)&&(window.event.keyCode==115))
+		     { 
+		         //屏蔽Alt+F4
+		         window.showModelessDialog("about:blank","","dialogWidth:1px;dialogheight:1px");
+		         return false;
+		     }  
+		};
+		
+4、调整IFrame高度		
+  function loadFrameH(hg)
+{	
+	var fr = document.getElementById("pageResult");
+	fr.height=pageResult.document.body.scrollHeight;
+}

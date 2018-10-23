@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- test -->
+	<bean id="indexAction" class="com.congoal.cert.action.LoginAction"
+		scope="prototype"></bean>
+		
+	<!-- action -->
+	<bean id="verifySignAction" class="com.congoal.cert.action.VerifySignAction"
+		scope="prototype">
+		
+	</bean>
+
+<!-- 	<bean id="certAdministrationAction" class="com.congoal.cert.action.CertAdministrationAction" -->
+<!-- 		scope="prototype"> -->
+<!-- 	</bean> -->
+	
+<!-- 	<bean id="fileDownloadAction" class="com.congoal.cert.action.FileDownloadAction" -->
+<!-- 		scope="prototype"> -->
+<!-- 	</bean> -->
+	
+	<bean id="springSecurityErrorAction" class="com.congoal.cert.action.SpringSecurityErrorAction"
+		scope="prototype">
+	</bean>
+	
+	<bean id="userAdministration" class="com.congoal.cert.action.UserAdministration"
+		scope="prototype">
+	</bean>
+	
+	<bean id="roleAdministration" class="com.congoal.cert.action.RoleAdministration"
+		scope="prototype">
+	</bean>
+	
+	<bean id="resourceAdministration" class="com.congoal.cert.action.ResourceAdministration"
+		scope="prototype">
+	</bean>
+	
+	<bean id="configAction" class="com.congoal.cert.action.ConfigAction"
+		scope="prototype">
+	</bean>
+	<bean id="loginAgainAction" class="com.congoal.cert.action.LoginAction"
+		scope="prototype">
+	</bean>
+</beans>

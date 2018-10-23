@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="GZSJLARSCA"
+  id="myeclipse.1336572943484"
+  context-root="/GZSJLARSCA"
+  j2ee-spec="5.0"
+  archive="GZSJLARSCA.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

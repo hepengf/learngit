@@ -1,0 +1,4 @@
+#Mon Sep 14 13:58:20 CST 2015
+eclipse.preferences.version=1
+validator.Checked=res/struts.xml,WebRoot/web/GDCA_CAPICOM.jsp,WebRoot/web/GDCA_CAPICOM.HTM,src/struts.xml
+validator.Unchecked=

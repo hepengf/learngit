@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+
+	<!-- action -->
+	<bean id="verifySignAction" class="com.congoal.cert.action.VerifySignAction"
+		scope="prototype">
+	</bean>
+
+	<bean id="certAdministrationAction" class="com.congoal.cert.action.CertAdministrationAction"
+		scope="prototype">
+		<property name="certAdministrationService" ref="certAdministrationService"></property>
+		<property name="certUtil" ref="certUtil"></property>
+	</bean>
+	
+	<!-- dao -->
+	<bean id="certAdministrationDao" class="com.congoal.cert.dao.impl.CertAdministrationDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<!-- service -->
+	<bean id="certAdministrationService" class="com.congoal.cert.service.impl.CertAdministrationServiceImpl">
+		<property name="certAdministrationDao" ref="certAdministrationDao"></property>
+	</bean>
+
+	<!-- utils -->
+	<bean id="certUtil" class="com.congoal.cert.req.CertUtil" scope="prototype"></bean>
+</beans>

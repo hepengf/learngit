@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	">
+	
+	<context:annotation-config/>
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+	
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+	<context:component-scan base-package="com.congoal.cert" />
+	<!-- 避免部署多个含有数据源项目时，警告的出现 -->
+<!--     <bean id="sysProps" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="java.lang.System"/>
+        <property name="targetMethod" value="setProperty"/>
+        <property name="arguments">
+            <list>
+                <value>com.mchange.v2.c3p0.management.ManagementCoordinator</value>
+               	<value>com.mchange.v2.c3p0.management.NullManagementCoordinator</value>
+            </list>
+        </property>
+    </bean> -->
+	<!-- 数据源设置 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${hibernate.driver}"/>
+        <property name="jdbcUrl" value="${hibernate.url}"/>
+        <property name="user" value="${hibernate.username}"/>
+        <property name="password" value="${hibernate.password}"/>
+        <!-- C3P0连接池 -->
+        <property name="initialPoolSize" value="${c3p0.initialPoolSize}"/>
+        <property name="minPoolSize" value="${c3p0.minPoolSize}"/>
+        <property name="maxPoolSize" value="${c3p0.maxPoolSize}"/>
+        <property name="maxIdleTime" value="${c3p0.maxIdleTime}"/>
+        <property name="acquireIncrement" value="${c3p0.acquireIncrement}"/>
+        <!-- <property name="checkoutTimeout" value="${c3p0.checkoutTimeout}"/> -->
+        <property name="breakAfterAcquireFailure" value="${c3p0.breakAfterAcquireFailure}"/>
+        <property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}"/>
+        <property name="testConnectionOnCheckin" value="${c3p0.testConnectionOnCheckin}"/>
+        <property name="testConnectionOnCheckout" value="${c3p0.testConnectionOnCheckout}"/>
+        <property name="acquireRetryAttempts" value="${c3p0.acquireRetryAttempts}"/>
+        <property name="acquireRetryDelay" value="${c3p0.acquireRetryDelay}"/>
+        <property name="preferredTestQuery" value="select GETDATE()"/>
+    </bean>
+    <!-- 
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${hibernate.driver}">
+		</property>
+		<property name="url" value="${hibernate.url}"></property>
+		<property name="username" value="${hibernate.username}"></property>
+		<property name="password" value="${hibernate.password}"></property>
+		<property name="initialSize" value="${hibernate.initialSize}" />
+		<property name="maxActive" value="${hibernate.maxActive}" />
+	</bean> 
+	-->
+	<!-- <bean id="dataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource" >
+		<property name="driver">
+			<value>${hibernate.driver}</value>
+		</property>
+		<property name="driverUrl">
+			<value>${hibernate.url}</value>
+		</property>
+		<property name="user">
+			<value>${hibernate.username}</value>
+		</property>
+		<property name="password">
+			<value>${hibernate.password}</value>
+		</property>
+		<property name="alias">
+			<value>cca</value>
+		</property>
+		<property name="prototypeCount">
+			<value>5</value>
+		</property>
+		<property name="maximumConnectionCount">
+			<value>10</value>
+		</property>
+		<property name="minimumConnectionCount">
+			<value>3</value>
+		</property>
+		<property name="trace">
+			<value>true</value>
+		</property>
+		<property name="verbose">
+			<value>true</value>
+		</property>
+		<property name="houseKeepingSleepTime">
+			<value>120000</value>
+		</property>
+		<property name="simultaneousBuildThrottle">
+			<value>10</value>
+		</property>
+		<property name="testBeforeUse"> 
+			<value>true</value> 
+		</property>
+		<property name="houseKeepingTestSql"> 
+			<value>select 1 from dual</value> 
+		</property> 
+	</bean>
+-->
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:driver.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					${hibernate.dialect}
+				</prop>
+				<prop key="hibernate.show_sql">
+					${hibernate.show_sql}
+				</prop>
+				<prop key="hibernate.format_sql">
+					${hibernate.format_sql}
+				</prop>
+<!-- 				 <prop key="hibernate.hbm2ddl.auto"> -->
+<!-- 					create -->
+<!-- 				</prop> -->
+				
+			</props>
+		</property>
+
+		<property name="packagesToScan">
+			<list>
+				<value>com.congoal.cert.pojo</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+
+	<!-- 事务通知 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="find*" read-only="true" />
+			<tx:method name="*" propagation="REQUIRED"
+				rollback-for="Throwable" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!--
+		 第一个 * —— 通配 任意返回值类型
+		第二个 * —— 通配 包com.congoal.cert.service.impl下的任意class
+		第三个 * —— 通配 包com.congoal.cert.service.impl下的任意class的任意方法
+		第四个 .. —— 通配 方法可以有0个或多个参数
+		 -->
+	<!-- aop代理设置 -
+	<aop:config proxy-target-class="true">
+		<aop:advisor pointcut="execution(* com.congoal.cert.service.*.*(..))"
+			advice-ref="txAdvice" />
+		 <aop:advisor pointcut="execution(* com.congoal.cert.action.*.*(..))"
+			advice-ref="txAdvice" /> 
+	</aop:config>-->
+	<!-- 定义使用事务管理的方法 -->
+    <aop:config>
+        <aop:pointcut id="managerMethod"
+                      expression="execution(* com.congoal.cert.service.*.*(..))"/>
+        <aop:advisor pointcut-ref="managerMethod" advice-ref="txAdvice"/>
+    </aop:config>
+     <tx:annotation-driven transaction-manager="transactionManager" /> 
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>

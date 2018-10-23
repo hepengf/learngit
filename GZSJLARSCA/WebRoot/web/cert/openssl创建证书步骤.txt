@@ -1,0 +1,212 @@
+cd C:\Documents and Settings\huang\桌面\证书\openssl\openssl-0.9.8h-1-bin\bin\cahome
+
+构建目录
+mkdir certs
+mkdir crl
+mkdir newcerts
+mkdir private
+
+构建文件
+echo 0>index.txt
+echo 01>serial
+
+构建随机数
+openssl rand -out private/.rand 1000
+
+产生私钥
+openssl genrsa -des3 -out private/ca.key.pem 2048    密码：123456
+
+生成根证书签发申请 ca.csr
+openssl req -new -key private/ca.key.pem -out private/ca.csr -subj "/C=CN/ST=GD/L=GZ/O=hgsoft/OU=yanfazhongxin/CN=mooke" -config "D:/software/OpenSSL-Win64/openssl.conf"
+
+	// CN（Common Name - 名字与姓氏）
+	// OU（Organization Unit - 组织单位名称）
+	// O（Organization - 组织名称）
+	// L（Locality - 城市或区域名称）
+	// ST（State - 州或省份名称）
+	// C（Country - 国家名称）
+
+	语法
+	openssl req[-inform PEM|DER] [-outform PEM|DER] [-in filename] [-passin arg] [-out filename] [-passout arg] [-text] [-pubkey] [-noout] [-verify] [-modulus] [-new] [-rand file(s)] [-newkey rsa:bits] [-newkey alg:file] [-nodes] [-key filename] [-keyform PEM|DER] [-keyout filename] [-keygen_engine id] [-[digest]] [-config filename] [-subj arg] [-multivalue-rdn] [-x509] [-days n] [-set_serial n] [-asn1-kludge] [-no-asn1-kludge] [-newhdr] [-extensions section] [-reqexts section] [-utf8] [-nameopt] [-reqopt] [-subject] [-subj arg] [-batch] [-verbose] [-engine id]
+
+		
+签发根证书 ca.cer
+openssl x509 -req -days 365 -sha1 -extensions v3_ca -signkey private/ca.key.pem -in private/ca.csr -out private/certs/ca.cer -setalias rootca
+
+
+根证书转换 ca.p12
+openssl pkcs12 -export -clcerts -in private/certs/ca.cer -inkey private/ca.key.pem -out private/certs/ca.p12
+ 密钥密码：123456
+ 
+
+查看证书内容
+openssl x509 -in private/certs/ca.cer -text -noout
+查看PKCS#12证书内容(含私钥)
+openssl pkcs12 -info -in private/certs/ca.p12
+
+
+
+openssl pkcs12 -info -in F:/tempWorkSpaces/CCA/WebRoot/certs/new/sub/CN20150113162742.pfx
+keytool -list -v -storetype pkcs12 -keystore F:/tempWorkSpaces/CCA/WebRoot/certs/new/sub/CN20150113162742.pfx
+keytool -list -v -keystore F:/pojo_wse14/CCA/WebRoot/certs/root/ca.keystore -storepass 123456
+keytool -printcert -v -file F:/tempWorkSpaces/CCA/WebRoot/certs/new/root/CN20150113162742.cer
+
+
+
+
+颁发服务器证书
+openssl genrsa -out private/server.key.pem 2048    密码：123456
+
+生成服务器证书请求 server.csr
+openssl req -new -key private/server.key.pem -out private/server.csr -subj "/C=CN/ST=BJ/L=BJ/O=zlex/OU=zlex/CN=www.zlex.org"  -config "C:\Documents and Settings\huang\桌面\证书\openssl\openssl-0.9.8h-1-bin\bin\cahome\openssl.conf"
+
+签发服务器证书 server.cer
+openssl x509 -req -days 365 -sha1 -extensions v3_req -CA certs/ca.cer -CAkey private/ca.key.pem -CAserial ca.srl -CAcreateserial -in private/server.csr -out certs/server.cer
+
+服务器证书转换 server.p12
+openssl pkcs12 -export -clcerts -in certs/server.cer -inkey private/server.key.pem -out certs/server.p12 密钥密码：123456
+
+产生客户私钥
+openssl genrsa -des3 -out private/client.key.pem 2048  密码：123456
+
+生成客户证书请求 client.csr
+openssl req -new -key private/client.key.pem -out private/client.csr -subj "/C=CN/ST=BJ/L=BJ/O=zlex/OU=zlex/CN=zlex" -config "C:\Documents and Settings\huang\桌面\证书\openssl\openssl-0.9.8h-1-bin\bin\cahome\openssl.conf"
+
+签发客户证书 client.cer
+openssl ca -in private/client.csr -days 365 -out certs/client.cer -cert certs/ca.cer -keyfile private/ca.key.pem -notext -config "C:\Documents and Settings\huang\桌面\证书\openssl\openssl-0.9.8h-1-bin\bin\cahome\openssl.conf"
+
+客户证书转换 client.p12
+openssl pkcs12 -export -inkey private/client.key.pem -in certs/client.cer -out certs/client.p12 密钥密码：123456
+
+
+
+**********************密钥库转换**************************
+根密钥库转换 ca.keystore
+keytool -importkeystore -v -srckeystore private/certs/ca.p12 -srcstorepass 123456 -destkeystore private/certs/ca.keystore -srcstoretype pkcs12 -deststorepass 123456
+keytool -list -keystore private/certs/ca.keystore -v -storepass 123456
+密钥库类型：jks
+别名：1
+条目类型：PrivateKeyEntry
+证书链：1
+
+
+服务器密钥库转换 server.keystore
+keytool -importkeystore -v -srckeystore certs/server.p12 -srcstorepass 123456 -destkeystore certs/server.keystore -srcstoretype pkcs12 -deststorepass 123456
+keytool -list -keystore certs/server.keystore -v -storepass 123456
+
+客户密钥库转换 client.keystore
+keytool -importkeystore -v -srckeystore certs/client.p12 -srcstorepass 123456 -destkeystore certs/client.keystore -srcstoretype pkcs12 -deststorepass 123456
+keytool -list -keystore certs/client.keystore -v -storepass 123456
+
+
+
+
+
+
+
+
+SSL双向认证Java实现
+1. 生成服务器端CA证书链Cert Path 
+
+1.1 生成服务器端的根证书S03RootCA
+1.1.1 创建密钥
+    openssl genrsa -des3 -out S03RootCA.key 2048  密码：server
+    
+1.1.1 利用CA密钥自签署CA证书
+    openssl req -config S03RootCA.conf -new -x509 -days 3650 -key S03RootCA.key -out S03RootCA.crt
+    
+1.2 生成服务器端的二级CA证书S03CA1
+1.2.1 创建密钥
+    openssl genrsa -des3 -out S03CA1.key 2048  密码：SERVER1
+1.2.2 生成Certificate Signing Request（CSR）
+    openssl req -config S03CA1.conf -new -key S03CA1.key -out S03CA1.csr
+    
+
+1.3 生成的csr文件交给CA(S03RootCA)签名后形成自己服务端二级证书
+    openssl ca -config S03RootCA.conf -keyfile S03RootCA.key -cert S03RootCA.crt -in S03CA1.csr -out S03CA1.crt -days 3650
+ 
+ 
+2. 生成客户端CA证书链Cert Path 
+
+2.1 生成客户端的根证书C03RootCA
+2.1.1 创建密钥
+    openssl genrsa -des3 -out C03RootCA.key 1024
+密码：client
+2.1.1 利用CA密钥自签署CA证书
+    openssl req -config C03RootCA.conf -new -x509 -days 3650 -key C03RootCA.key -out C03RootCA.crt
+    
+2.2 生成客户端的二级CA证书C03CA1
+2.2.1 创建密钥
+    openssl genrsa -des3 -out C03CA1.key 1024
+密码：client1
+2.2.2 生成Certificate Signing Request（CSR）
+    openssl req -config C03CA1.conf -new -key C03CA1.key -out C03CA1.csr
+    
+2.3 生成的csr文件交给CA(C03RootCA)签名后形成客户端二级证书
+    openssl ca -config C03RootCA.conf -keyfile C03RootCA.key -cert C03RootCA.crt -in C03CA1.csr -out C03CA1.crt -days 3650
+ 
+ 
+ 
+(以上步骤已经将服务端CA和客户端CA创建)
+
+3. 利用Keytool生成服务器端的keystore文件并在CA中心签名 
+
+3.1 以jks格式生成服务器端包含Public key和Private Key的keystore文件，keypass与storepass务必要一样，因为在tomcat server.xml中只配置一个password.
+    keytool -genkey -alias Server1 -keystore Server1Keystore.jks -keypass 123456 -storepass 123456 -keyalg RSA  -keysize 512 -validity 365 -v -dname "CN = MOOKE/218.168.127.126,OU =CONGOAL,O = CONGOAL,L = GZ,C = CN"
+
+3.2 生成Certificate Signing Request（CSR）
+    keytool -certreq -alias Server1 -keystore Server1Keystore.jks -file Server1.csr
+
+3.3 将Server1.csr到服务器端CA中心（S03CA1）去签名
+    openssl ca -config S03CA1.conf -keyfile S03CA1.key -cert S03CA1.crt -in Server1.csr -out Server1FromCA.crt -days 3650
+
+3.4 格式化Server1FromCA.crt，否则用keytool import的时候会出现error：invalid DER-encoded certificate data
+    openssl x509 -in Server1FromCA.crt -out Server1FromCA.der -outform DER
+
+3.5 将经过CA签名的Server1FromCA.der导入keystore中
+
+3.5.1 格式化根证书S03RootCA, 并导入keystore.
+    openssl x509 -in S03RootCA.crt -out S03RootCA.der -outform DER
+    keytool -import -alias S03RootCA -keystore Server1Keystore.jks -file S03RootCA.der
+3.5.2 格式化CA二级证书S03CA1, 并导入keystore.
+    openssl x509 -in S03CA1.crt -out S03CA1.der -outform DER
+    keytool -import -alias S03CA1 -keystore Server1Keystore.jks -file S03CA1.der
+3.5.3 将经过CA签名后的Server1FromCA.der导入keystore.(别名必须与KeyEntry的一样，在导入之前必须先导入CA的根证书和二级证书) 
+     keytool -import -alias Server1 -keystore Server1Keystore.jks -file Server1FromCA.der
+
+
+4. 利用Keytool生成客户端的keystore文件并在CA中心签名 
+
+4.1 以jks格式生成服务器端包含Public key和Private Key的keystore文件.
+    keytool -genkey -alias Client1 -keystore Client1Keystore.jks -keypass 123456 -storepass 123456 -keyalg RSA  -keysize 512 -validity 365 -v -dname "CN = GNETE,OU =CONGOAL,O = CONGOAL,L = GZ,C = CN"
+
+4.2 生成Certificate Signing Request（CSR）
+    keytool -certreq -alias Client1 -keystore Client1Keystore.jks -file Client1.csr
+
+4.3 将Client1.csr到服务器端CA中心（C03CA1）去签名
+    openssl ca -config C03CA1.conf -keyfile C03CA1.key -cert C03CA1.crt -in Client1.csr -out Client1FromCA.crt -days 3650
+
+4.4 格式化Client1FromCA.crt，否则用keytool import的时候会出现error：invalid DER-encoded certificate data
+    openssl x509 -in Client1FromCA.crt -out Client1FromCA.der -outform DER
+
+4.5 将经过CA签名的Server1FromCA.der导入keystore中
+
+4.5.1 格式化根证书C03RootCA, 并导入keystore.
+    openssl x509 -in C03RootCA.crt -out C03RootCA.der -outform DER
+    keytool -import -alias C03RootCA -keystore Client1Keystore.jks -file C03RootCA.der
+4.5.2 格式化CA二级证书C03CA1, 并导入keystore.
+    openssl x509 -in C03CA1.crt -out C03CA1.der -outform DER
+    keytool -import -alias C03CA1 -keystore Client1Keystore.jks -file C03CA1.der
+4.5.3 将经过CA签名后的Server1FromCA.der导入keystore.(别名必须与KeyEntry的一样，在导入之前必须先导入CA的根证书和二级证书) 
+     keytool -import -alias Client1 -keystore Client1Keystore.jks -file Client1FromCA.der
+
+5. 客户端和服务器端建立信任关系 
+
+5.1 将客户端的(C03RootCA.der,C03CA1.der,Client1FromCA.der)发送给服务端Server1，并导入服务端的truststore。   
+   keytool -import -alias C03CA1 -keystore Server1Truststore.jks -storepass 123456 -file C03CA1.der
+
+5.2 将服务端的(S03RootCA.der,S03CA1.der,Server1FromCA.der)发送给客户端Client1，并导入客户端的truststore,一般客户端会信任服务端的根证书或二级证书。这样服务器端证书更新了， 无需更新客户的truststore。
+    keytool -import -alias S03RootCA -keystore Client1Truststore.jks -storepass 123456 -file S03RootCA.der
+ 
+服务器端： Server1Keystore.jks   Server1Truststore.jks
+ 客户端：   Client1Keystore.jks   Client1Truststore.jks

@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<constant name="struts.objectFactory" value="spring" />
+	<constant name="struts.ognl.allowStaticMethodAccess" value="true"/>
+	
+	<package name="s1"  extends="struts-default">
+		<global-results>
+  			<result name="timeout">/login.jsp?error=${Message}</result>
+  		</global-results>
+  		
+		<!-- 登入 -->
+		<action name="index" class="indexAction" method="init">
+			<result>/index.jsp</result>
+		</action>
+		<!-- 登出 -->
+		<action name="logoutAction" class="indexAction" method="logout">
+  			<!-- <result>/login.jsp</result> -->
+  		</action>
+	</package>
+	
+	<package name="s2" extends="struts-default">
+		<interceptors>
+			<interceptor name="checkSession"
+				class="com.congoal.cert.utils.CheckSessionInterceptor" />
+				
+			<interceptor-stack name="teamwareStack">
+				<interceptor-ref name="checkSession" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>	
+		</interceptors>
+		
+		<default-interceptor-ref name="teamwareStack"></default-interceptor-ref>
+		
+<!--  		<global-results>
+  			<result name="timeout">/login.jsp?error=invalid</result>
+  		</global-results> -->	
+		<action name="bcVerifySign" class="verifySignAction" method="loginWithBc">
+			<result>/web/verifySignSuccess.jsp</result>
+		</action>
+		
+		<action name="iaikVerifySign" class="verifySignAction" method="loginWithIAIK">
+			<result>/web/verifySignSuccess.jsp</result>
+		</action>
+		<!-- 子证书申请 -->
+		<action name="CertAppRequestAction" class="certAdministrationAction" method="certAppRequest">
+			<result>/web/certApp.jsp</result>
+		</action>
+		<!-- 终端证书申请 -->
+		<action name="DevAppRequstAction" class="certAdministrationAction" method="certAppRequest">
+			<result>/web/mobileTermCertList.jsp</result>
+		</action>
+		<action name="servAppRequestAction" class="certAdministrationAction" method="certAppRequest">
+			<result>/web/serverTermCertList.jsp</result>
+		</action>
+		<!-- 根证书申请 -->
+		<action name="rootCertAppAction" class="certAdministrationAction" method="rootCertApp">
+			<result type="chain">redirectRootCertCheckAction</result>
+		</action>
+		
+		<!-- 根证书审核界面跳转 -->
+		<action name="redirectRootCertCheckAction" class="certAdministrationAction" method="redirectRootCertCheck">
+			<result>/web/rootCertCheck.jsp</result>
+		</action>
+		<action name="findRootCertInfoAction" class="certAdministrationAction" method="findRootCertInfo">
+			<result>/web/findRootCertInfo</result>
+		</action>
+		<!-- 证书审核 -->
+		<action name="certCheckAction" class="certAdministrationAction" method="certCheck">
+			<result type="chain">${redirectUrl}</result>
+		</action>
+		
+		<!-- 子证书审核界面跳转 -->
+		<action name="redirectCertCheckAction" class="certAdministrationAction" method="redirectCertCheck">
+			<result>/web/certCheck.jsp</result>
+		</action>
+		
+		<!-- 子证书签发界面跳转 -->
+		<action name="subCertAppDetailAction" class="certAdministrationAction" method="subCertAppDetail">
+			<result>/web/subCertAppDetail.jsp</result>
+		</action>
+		
+		<!-- 导出Cer证书 -->
+		<action name="exportCertAction" class="certAdministrationAction" method="exportCert">
+			<result type="chain">findSignCertAction</result>
+		</action>
+		
+		<!-- 跳转到生成证书吊销列表界面 -->
+		<action name="redirectCreateCrlAction" class="certAdministrationAction" method="redirectCreateCrl">
+			<result>/web/createCrlCheck.jsp</result>
+		</action>
+		
+		<!-- 生成证书吊销列表 -->
+		<action name="createCertCrlAction" class="certAdministrationAction" method="createCertCrl">
+			<result type="chain">redirectCreateCrlAction</result>
+		</action>
+		
+		<action name="redirectRootCertAppAction" class="certAdministrationAction" method="redirectRootCertApp">
+			<result>/web/rootCertApp.jsp</result>
+		</action>
+		
+		<action name="revokedCertListAction"  class="certAdministrationAction" method="revokedCertList">
+			<result>/web/revokedCertList.jsp</result>
+		</action>
+		
+		<action name="rootCertExportAction" class="certAdministrationAction" method="rootExport">
+			<result type="chain">/web/certExport.jsp</result>
+		</action>
+		
+		<action name="rootCertExportAction" class="fileUploadAction" method="upload">
+			<result type="chain">/web/certExport.jsp</result>
+		</action>
+		<action name="rootCertInfoAction" class="certAdministrationAction" method="rootInfo">
+			<result>/web/certInfo.jsp</result>
+		</action>
+		
+		<action name="certAppDetailAction" class="certAdministrationAction" method="certAppDetail">
+			<result>/web/certAppDetail.jsp</result>
+		</action>
+		<!-- 子证书签发 -->
+		<action name="subCertAppAction" class="certAdministrationAction" method="certApp">
+			<result type="chain">findSignCertAction</result>
+		</action>
+		<!-- 终端证书签发 -->
+		<action name="subDevCertAppAction" class="certAdministrationAction" method="certApp">
+			<result type="chain">findDevSignCertAction</result>
+		</action>
+		<action name="certLockAction" class="certAdministrationAction" method="lockCert">
+			<result type="chain" name="mobile">findDevSignCertAction</result>
+			<result type="chain" name="server">findSevSignCertAction</result>
+		</action>
+		<action name="certunLockAction" class="certAdministrationAction" method="unlockCert">
+			<result type="chain" name="mobile">findDevSignCertAction</result>
+			<result type="chain" name="server">findSevSignCertAction</result>
+		</action>
+		<!-- 服务器证书签发 -->
+		<action name="subSevCertAppAction" class="certAdministrationAction" method="certApp">
+			<result name="error">/web/exportcert/bulkCert.jsp</result>
+			<result type="chain">bulkImportAction</result>
+		</action>
+		<action name="certAppAction" class="certAdministrationAction" method="certApp">
+			<result type="chain">bulkImportAction</result>
+		</action>
+		<action name="serviceCertAppAction" class="certAdministrationAction" method="serverCertApp">
+			<result >/web/serverCertApp.jsp</result>
+		</action>
+		
+		<action name="signServerCertAppAction" class="certAdministrationAction" method="signServerCertApp">
+			<result type="chain">findSevSignCertAction</result>
+		</action>
+		
+		<action name="findUnSignCertAction" class="certAdministrationAction" method="findUnSignCert">
+			<result>/web/unSignCertList.jsp</result>
+		</action>
+		<!-- 已签发证书查询 -->
+		<action name="findSignCertAction" class="certAdministrationAction" method="findSignCert">
+			<result>/web/signCertList.jsp</result>
+		</action>
+		<!-- 移动设备已签发证书查询 -->
+		<action name="findDevSignCertAction" class="certAdministrationAction" method="findSignDevCert">
+			<result>/web/mobileTermCertList.jsp</result>
+		</action>
+		<!--  -->
+		<action name="findSevSignCertAction" class="certAdministrationAction" method="findSignSevCert">
+			<result>/web/serverTermCertList.jsp</result>
+		</action>
+		<!-- 证书签发 -->
+		<action name="signCertAction" class="certAdministrationAction" method="signCert">
+			<result type="chain">findSignCertAction</result>
+		</action>
+		
+		
+		<!-- 吊销证书 -->
+		<action name="disabledCertAppAction" class="certAdministrationAction" method="disabledCertApp">
+			<result type="chain" name="server">
+				findSevSignCertAction
+			</result>
+			<result type="chain" name="mobile">
+				findDevSignCertAction
+			</result>
+		</action>
+		
+		
+		<action name="disabledCertCheckAction" class="certAdministrationAction" method="disabledCertCheck">
+			<result>/web/disableCertList.jsp</result>
+		</action>
+		
+<!-- 		<action name="disabledCertAction" class="certAdministrationAction" method="disabledCert"> -->
+<!-- 			<result type="chain">disabledCertCheckAction</result> -->
+<!-- 		</action> -->
+		
+		<action name="redirectDisabledCertAppCheckAction" class="certAdministrationAction" method="redirectDisabledCertAppCheck">
+			<result>disableCertCheckList.jsp</result>
+		</action>
+		
+		<action name="redirectDisabledCertCheckAction" class="certAdministrationAction" method="redirectDisabledCertCheck">
+			<result>disableCertCheckDetail.jsp</result>
+		</action>
+		
+		<action name="disableCertCheckAction" class="certAdministrationAction" method="disabledCert">
+			<result type="chain">certCrlCheckAction</result>
+		</action>
+		
+		<action name="disabledCertManageAction" class="certAdministrationAction" method="invokedCertList">
+			<result>/web/applyInvokeCertList.jsp</result>
+		</action>
+		
+		<!-- 批量导入管理界面 -->
+		<action name="bulkImportAction" class="certAdministrationAction" method="bulkImport">
+			<result>/web/exportcert/bulkCertList.jsp</result>
+		</action>
+		
+		<action name="exportBulkFileAction" class="certAdministrationAction" method="bulkImportFile">
+			<result name="success" type="dispatcher">/web/exportcert/bulkCert.jsp</result>
+			<!-- <result name="success">/web/exportcert/bulkCert.jsp</result> -->
+		</action>
+		<action name="genCRLAction" class="certAdministrationAction" method="genCRL">
+			<result>/web/crlGenSuccess.jsp</result>
+		</action>
+		
+		<action name="accessDeniedAction" class="springSecurityErrorAction" method="accessDenied">
+			<result>/web/accessDenied.jsp</result>
+		</action>
+		
+		<action name="certCrlCheckAction" class="certAdministrationAction" method="certCrlCheck">
+			<result>/web/crlCheck.jsp</result>
+		</action>
+		
+		
+		<!-- 用户 -->
+		<action name="findAllUserListAction" class="userAdministration" method="findAllUserList">
+			<result>/web/user/userAdministartor.jsp</result>
+		</action>
+		
+		<action name="userSetRoleCheckAction" class="userAdministration" method="userSetRoleCheck">
+			<result name="update">/web/user/userSetRole.jsp</result>
+		</action>
+		
+		<action name="userSetRoleAction" class="userAdministration" method="userSetRole">
+			<result type="chain">findAllUserListAction</result>
+		</action>
+		<action name="AdminInfoAction" class="userAdministration" method="info">
+			<result>/web/user/personInfo.jsp</result>
+		</action>
+		<action name="invalidateUserAction" class="indexAction" method="invalidateUser"></action>
+		
+		<action name="disableUserAction" class="userAdministration" method="disableUser"></action>
+		
+		<action name="userDeleteAction" class="userAdministration" method="deleteUser"></action>
+		
+		<action name="addUserPageAction" class="userAdministration" method="addUserPage">
+			<result>
+				/web/user/addUser.jsp
+			</result>
+		</action>
+		
+		<action name="addUserAction" class="userAdministration" method="addUser">
+			<result type="chain">findAllUserListAction</result>
+			<result name="error">/web/user/addUser.jsp</result>
+		</action>
+		<action name="modUserAction" class="userAdministration" method="modUser">
+			<result type="chain">personInfoAction</result>
+		</action>
+		<action name="personInfoAction" class="userAdministration" method="personInfo">
+			<result>/web/user/personInfo.jsp</result>
+		</action>
+		<!-- 用户 -->
+		
+		<!-- 角色 -->
+		<action name="findAllRoleListAction" class="roleAdministration" method="findAllRoleList">
+			<result>/web/role/roleAdministartor.jsp</result>
+		</action>
+		
+		<action name="roleSetResourceCheckAction" class="roleAdministration" method="roleSetResourceCheck">
+			<result name="error" type="chain">findAllRoleListAction</result>
+			<result>/web/role/roleSetResource.jsp</result>
+		</action>
+		<action name="deleteroleAction" class="roleAdministration" method="deleteRole">
+		</action>
+		<action name="disableroleAction" class="roleAdministration" method="disablerole">
+			<result type="chain">findAllRoleListAction</result>
+		</action>
+		<action name="roleSetCheckedResource" class="roleAdministration" method="roleSetCheckedResourceChecked">
+			<result type="chain">findAllRoleListAction</result>
+		</action>
+		
+		<action name="getResourceXMLAction" class="roleAdministration" method="getResourceXML">
+		</action>
+		
+		<action name="roleAddAction" class="roleAdministration" method="addRole">
+			<result>/web/role/addRole.jsp</result>
+		</action>
+		<action name="addsysUserAction" class="roleAdministration" method="addSystemRole">
+			<result name="error">/web/role/addRole.jsp</result>
+			<result type="chain">findAllRoleListAction</result>
+		</action>
+		<!-- 角色 -->
+		
+		<!-- 资源 -->
+		<action name="findAllResourceListAction" class="resourceAdministration" method="findAllResourceList">
+			<result>/web/resource/resourceAdministartor.jsp</result>
+		</action>
+		<action name="deleteResourceAction" class="resourceAdministration" method="deleteResource">
+			<result type="chain">findAllResourceListAction</result>
+		</action>
+		
+		
+		
+		<!-- 资源 -->
+		
+		<!-- 系统参数 -->
+		<action name="findAllConfigAction" class="configAction" method="findAllConfig">
+			<result>/web/config/configAdministartor.jsp</result>
+		</action>
+		
+		<action name="statisticsAction" class="configAction" method="statistics">
+			<result>${path}</result>
+		</action>
+		
+		<action name="updateConfigAction" class="configAction" method="updateConfig">
+		</action>
+		
+		
+		<!-- 系统参数 -->
+		
+		<!-- 密钥库文件下载 -->
+		<action name="certDownloadAction" class="fileDownloadAction"
+			method="CertDownload">
+			 <!--下载文件的目录，若不在这个目录下则拒绝下载以保障安全，这点在action类中实现  -->
+            <!--  <param name="inputPath">/upload</param>-->
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream </param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<param name="bufferSize">4096</param>
+			</result>
+		</action>
+		
+		<!-- CER证书文件下载 -->
+		<action name="cerDownloadAction" class="fileDownloadAction"
+			method="cerDownload">
+			 <!--下载文件的目录，若不在这个目录下则拒绝下载以保障安全，这点在action类中实现  -->
+            <!--  <param name="inputPath">/upload</param>-->
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream </param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<param name="bufferSize">4096</param>
+			</result>
+		</action>
+		
+		<!-- CRL文件下载 -->
+		<action name="crlDownloadAction" class="fileDownloadAction"
+			method="crlDownload">
+			 <!--下载文件的目录，若不在这个目录下则拒绝下载以保障安全，这点在action类中实现  -->
+            <!--  <param name="inputPath">/upload</param>-->
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream </param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<param name="bufferSize">4096</param>
+			</result>
+		</action>
+		<action name="rootDownloadAction" class="fileDownloadAction" method="rootDownload">
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<param name="bufferSize">2048</param>
+			</result>
+		</action>
+		
+		
+	</package>
+
+</struts>
