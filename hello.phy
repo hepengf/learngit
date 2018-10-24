@@ -1,0 +1,4 @@
+<?
+echo '菜鸟教程：www.runoob.com';
+echo '菜鸡教程：www.runoob.com';
+?>
